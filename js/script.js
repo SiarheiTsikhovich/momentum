@@ -1,15 +1,4 @@
-
-// Clocks
-
-const time = document.querySelector('.time');
-
-function showTime() {
-    const date = new Date();
-    const currentTime = date.toLocaleTimeString();
-    time.textContent = currentTime;
-    setTimeout(showTime, 1000);
-}
-showTime();
+// time and Date
 
 // window.onload = function () {
 //     window.setInterval(function showTime() {
@@ -22,5 +11,27 @@ showTime();
 //     }
 //     );
 // };
+
+const dateCalendar = document.querySelector('.date');
+
+function showDate() {
+    const date = new Date();
+    const options = { weekday: 'long', month: 'long', day: 'numeric' };
+    const currentDate = date.toLocaleDateString('en-Br', options);
+    dateCalendar.textContent = currentDate;
+}
+
+const time = document.querySelector('.time');
+
+function showTime() {
+    const date = new Date();
+    const currentTime = date.toLocaleTimeString();
+    time.textContent = currentTime;
+    setTimeout(showTime, 1000);
+    showDate()
+}
+showTime();
+
+
 
 
