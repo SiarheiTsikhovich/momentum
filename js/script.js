@@ -14,6 +14,8 @@
 // };
 
 const dateCalendar = document.querySelector('.date');
+const greeting = document.querySelector('.greeting');
+const time = document.querySelector('.time');
 
 function showDate() {
     const date = new Date();
@@ -22,7 +24,6 @@ function showDate() {
     dateCalendar.textContent = currentDate;
 }
 
-const greeting = document.querySelector('.greeting');
 
 function getTimeOfDay() {
     const date = new Date();
@@ -38,25 +39,13 @@ function getTimeOfDay() {
     }
 }
 
-const timeOfDay = getTimeOfDay()
+
 
 function showGreeting() {
-    const greetingText = `Good ${timeOfDay}`
+    const greetingText = `Good ${getTimeOfDay()}`
     greeting.textContent = greetingText;
 }
 
-
-const time = document.querySelector('.time');
-
-function showTime() {
-    const date = new Date();
-    const currentTime = date.toLocaleTimeString();
-    time.textContent = currentTime;
-    showDate()
-    showGreeting()
-    setTimeout(showTime, 1000);
-}
-showTime();
 
 //Name
 
@@ -74,6 +63,64 @@ function getLocalStorage() {
 }
 window.addEventListener('load', getLocalStorage);
 
+//Slider
 
 
+const body = document.body;
+const slideNext = document.querySelector('.slide-next')
+const slidePrev = document.querySelector('.slide-prev')
+let randomNum = getRandomNum()
 
+
+function getRandomNum() {
+    min = Math.ceil(1);
+    max = Math.floor(20);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+
+function setBg() {
+    const timeOfDay = getTimeOfDay();
+    const bgNum = String(randomNum).padStart(2, '0');
+    const img = new Image();
+    img.src = `https://raw.githubusercontent.com/SiarheiTsikhovich/momentum-images/master/images/${timeOfDay}/${bgNum}.webp`;
+    img.addEventListener('load', () => {
+        body.style.backgroundImage = `url(https://raw.githubusercontent.com/SiarheiTsikhovich/momentum-images/master/images/${timeOfDay}/${bgNum}.webp)`;
+    })
+}
+setBg();
+
+
+function getSlideNext() {
+    if (randomNum <= 19) {
+        randomNum++;
+    } else {
+        randomNum = 1;
+    }
+    setBg();
+}
+
+
+function getSlidePrev() {
+    if (randomNum > 1) {
+        randomNum--;
+    } else {
+        randomNum = 20;
+    }
+    setBg();
+}
+
+
+slideNext.addEventListener('click', getSlideNext);
+slidePrev.addEventListener('click', getSlidePrev);
+
+function showTime() {
+    const date = new Date();
+    const currentTime = date.toLocaleTimeString();
+    time.textContent = currentTime;
+    showDate();
+    showGreeting();
+    setBg();
+    setTimeout(showTime, 1000);
+}
+showTime();
