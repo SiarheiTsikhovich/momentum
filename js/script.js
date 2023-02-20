@@ -170,3 +170,24 @@ function getLocalStorageCity() {
 window.addEventListener('load', getLocalStorageCity);
 
 
+//Quotes
+
+
+const quote = document.querySelector('.quote');
+const author = document.querySelector('.author');
+const quoteBtn = document.querySelector('.change-quote');
+
+
+async function getQuotes() {
+    const randomIndex = getRandomNum()
+    const quotes = '../data.json';
+    const res = await fetch(quotes);
+    const data = await res.json();
+
+    quote.textContent = data[randomIndex].text;
+    author.textContent = data[randomIndex].author;
+}
+getQuotes();
+
+quoteBtn.addEventListener('click', getQuotes);
+
