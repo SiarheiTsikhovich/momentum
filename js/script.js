@@ -1,9 +1,46 @@
+//Global variables
+'use strict';
+import playList from './playList.js';
 
-// time, Date, Greeting
+const body = document.body;
 
+//date, time, greeting variables
 const dateCalendar = document.querySelector('.date');
 const greeting = document.querySelector('.greeting');
 const time = document.querySelector('.time');
+
+//name, slider variables
+const inputName = document.querySelector('.name');
+const slideNext = document.querySelector('.slide-next')
+const slidePrev = document.querySelector('.slide-prev')
+let randomNum = getRandomNum(1, 20)
+
+//weather variables
+const weatherIcon = document.querySelector('.weather-icon');
+const temperature = document.querySelector('.temperature');
+const weatherDescription = document.querySelector('.weather-description');
+const wind = document.querySelector('.wind');
+const humidity = document.querySelector('.humidity');
+const city = document.querySelector('.city');
+
+//quote variables
+const quote = document.querySelector('.quote');
+const author = document.querySelector('.author');
+const quoteBtn = document.querySelector('.change-quote');
+
+//player variables
+const playPrevBtn = document.querySelector('.play-prev');
+const playStopBtn = document.querySelector('.play');
+const playNextBtn = document.querySelector('.play-next');
+const playListContainer = document.querySelector('.play-list');
+let playNum = 0;
+let isPlay = false;
+
+
+
+// time, Date, Greeting
+
+
 
 function showDate() {
     const date = new Date();
@@ -28,7 +65,6 @@ function getTimeOfDay() {
 }
 
 
-
 function showGreeting() {
     const greetingText = `Good ${getTimeOfDay()}`
     greeting.textContent = greetingText;
@@ -37,12 +73,13 @@ function showGreeting() {
 
 //Name
 
-const inputName = document.querySelector('.name');
+
 
 function setLocalStorageName() {
     localStorage.setItem('name', inputName.value)
 }
 window.addEventListener('beforeunload', setLocalStorageName);
+
 
 function getLocalStorageName() {
     if (localStorage.getItem('name')) {
@@ -51,18 +88,12 @@ function getLocalStorageName() {
 }
 window.addEventListener('load', getLocalStorageName);
 
+
 //Slider
 
 
-const body = document.body;
-const slideNext = document.querySelector('.slide-next')
-const slidePrev = document.querySelector('.slide-prev')
-let randomNum = getRandomNum()
 
-
-function getRandomNum() {
-    min = Math.ceil(1);
-    max = Math.floor(20);
+function getRandomNum(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
@@ -114,22 +145,16 @@ function showTime() {
 }
 showTime();
 
+
+
 //Weather
 
-const weatherIcon = document.querySelector('.weather-icon');
-const temperature = document.querySelector('.temperature');
-const weatherDescription = document.querySelector('.weather-description');
-const wind = document.querySelector('.wind');
-const humidity = document.querySelector('.humidity');
-const city = document.querySelector('.city');
 
 
 async function getWeather() {
-
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${city.value}&lang=en&appid=4f507497abe32c4725805a4e97ff125c&units=metric`;
     const res = await fetch(url);
     const data = await res.json();
-
     if (res.ok) {
         weatherIcon.className = 'weather-icon owf';
         weatherIcon.classList.add(`owf-${data.weather[0].id}`);
@@ -150,9 +175,9 @@ function setCity(event) {
         city.blur();
     }
 };
-// document.addEventListener('DOMContentLoaded', getWeather);
-city.addEventListener('keypress', setCity);
 
+
+city.addEventListener('keypress', setCity);
 
 
 function setLocalStorageCity() {
@@ -170,24 +195,114 @@ function getLocalStorageCity() {
 window.addEventListener('load', getLocalStorageCity);
 
 
+
 //Quotes
 
 
-const quote = document.querySelector('.quote');
-const author = document.querySelector('.author');
-const quoteBtn = document.querySelector('.change-quote');
-
 
 async function getQuotes() {
-    const randomIndex = getRandomNum()
+    const randomIndex = getRandomNum(1, 20)
     const quotes = '../data.json';
     const res = await fetch(quotes);
     const data = await res.json();
-
     quote.textContent = data[randomIndex].text;
     author.textContent = data[randomIndex].author;
 }
 getQuotes();
 
+
 quoteBtn.addEventListener('click', getQuotes);
+
+
+
+//Audioplayer
+
+
+
+const audio = new Audio();
+
+
+function addPlayTrack() {
+    let nameTrack = "";
+    for (let i = 0; i < playList.length; i++) {
+        const li = document.createElement('li');
+        nameTrack = playList[i].title;
+        li.textContent = nameTrack;
+        li.classList.add('play-item');
+        playListContainer.append(li);
+    }
+}
+addPlayTrack();
+
+
+const allLi = document.querySelectorAll('.play-item')
+const playTrackNow = Array.from(allLi);
+
+
+function playAudio() {
+    audio.src = playList[playNum].src
+    audio.currentTime = 0;
+    audio.play();
+    isPlay = true;
+    for (let i = 0; i <= playTrackNow.length - 1; i++) {
+        if (i == playNum) {
+            playTrackNow[i].classList.add('item-active');
+        } else {
+            playTrackNow[i].classList.remove('item-active');
+        }
+    }
+}
+
+
+function pauseAudio() {
+    audio.pause();
+    isPlay = false;
+}
+
+
+function audioPlay() {
+    if (!isPlay) {
+        playAudio()
+    } else {
+        pauseAudio()
+    }
+}
+
+
+function toggleBtn() {
+    if (isPlay) {
+        playStopBtn.classList.add('pause');
+    } else {
+        playStopBtn.classList.remove('pause');
+    }
+}
+
+
+function playNext() {
+    if (playNum < (playList.length - 1)) {
+        playNum++
+    } else {
+        playNum = 0;
+    }
+    playStopBtn.classList.add('pause');
+    playAudio()
+}
+
+
+function playPrev() {
+    if (playNum > 0) {
+        playNum--
+    } else {
+        playNum = 3;
+    }
+    playAudio()
+    playStopBtn.classList.add('pause');
+}
+
+
+playStopBtn.addEventListener('click', audioPlay);
+playStopBtn.addEventListener('click', toggleBtn);
+playNextBtn.addEventListener('click', playNext);
+playPrevBtn.addEventListener('click', playPrev);
+audio.addEventListener('ended', playNext);
 
