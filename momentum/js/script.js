@@ -202,7 +202,7 @@ window.addEventListener('load', getLocalStorageCity);
 
 async function getQuotes() {
     const randomIndex = getRandomNum(1, 20)
-    const quotes = '../data.json';
+    const quotes = './data.json';
     const res = await fetch(quotes);
     const data = await res.json();
     quote.textContent = data[randomIndex].text;
@@ -306,3 +306,13 @@ playNextBtn.addEventListener('click', playNext);
 playPrevBtn.addEventListener('click', playPrev);
 audio.addEventListener('ended', playNext);
 
+
+//languages
+
+
+const greetingTranslation = {
+    'en': ['Good night', 'Good morning', 'Good afternoon', 'Good evening'],
+    'by': ['Дабранач', 'Добрай раніцы', 'Добры дзень', 'Добры вечар'],
+
+}
+console.log(greetingTranslation)
